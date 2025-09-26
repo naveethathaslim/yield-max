@@ -3,9 +3,9 @@ import pickle
 import pandas as pd
 import os
 
-# ------------------- Load Pickle Helper --------------------
+# ------------------- Directories --------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.join(BASE_DIR, "models")  # models folder inside repo
+MODELS_DIR = os.path.join(BASE_DIR, "models")  # All .pkl models inside this folder
 
 def load_pickle(filename):
     path = os.path.join(MODELS_DIR, filename)
@@ -15,25 +15,31 @@ def load_pickle(filename):
         return pickle.load(f)
 
 # ------------------- Load Models & Encoders --------------------
-crop_model = load_pickle("models/crop_model.pkl")
-insurance_model = load_pickle("models/insurance_model.pkl")
-soil_encoder = load_pickle("models/soil_encoder.pkl")
-crop_encoder = load_pickle("models/crop_encoder.pkl")
+# Crop
+crop_model = load_pickle("crop_model.pkl")
+crop_encoder = load_pickle("crop_encoder.pkl")
+soil_encoder = load_pickle("soil_encoder.pkl")
 
-water_model = load_pickle("models/water_model.pkl")
-water_crop_encoder = load_pickle("models/water_crop_encoder.pkl")
-water_soil_encoder = load_pickle("models/water_soil_encoder.pkl")
-stage_encoder = load_pickle("models/stage_encoder.pkl")
+# Water
+water_model = load_pickle("water_model.pkl")
+water_crop_encoder = load_pickle("water_crop_encoder.pkl")
+water_soil_encoder = load_pickle("water_soil_encoder.pkl")
+stage_encoder = load_pickle("stage_encoder.pkl")
 
-fert_model = load_pickle("models/fertilizer_model.pkl")
-crop_enc = load_pickle("models/fert_crop_encoder.pkl")
-soil_enc = load_pickle("models/fert_soil_encoder.pkl")
-stage_enc = load_pickle("models/fert_stage_encoder.pkl")
-def_enc = load_pickle("models/fert_def_encoder.pkl")
-fert_label_enc = load_pickle("models/fert_label_encoder.pkl")
+# Fertilizer
+fert_model = load_pickle("fertilizer_model.pkl")
+crop_enc = load_pickle("fert_crop_encoder.pkl")
+soil_enc = load_pickle("fert_soil_encoder.pkl")
+stage_enc = load_pickle("fert_stage_encoder.pkl")
+def_enc = load_pickle("fert_def_encoder.pkl")
+fert_label_enc = load_pickle("fert_label_encoder.pkl")
+
+# Insurance
+insurance_model = load_pickle("insurance_model.pkl")
 
 # ------------------- Streamlit UI --------------------
 st.set_page_config(page_title="Yield Max 🌾", layout="wide")
+
 st.markdown("""
 <style>
 .main { background-color: #f6fff5; }
@@ -64,11 +70,11 @@ with tab1:
         temperature = st.number_input("Temperature (°C)", min_value=-10.0)
 
     if st.button("🔍 Predict Best Crop"):
-        soil_encoded = soil_encoder.transform([soil])[0]
-        input_data = pd.DataFrame([[soil_encoded, nitrogen, phosphorus, potassium, rainfall, ph, temperature]],
-                                  columns=['Soil_Type','Nitrogen','Phosphorus','Potassium','Rainfall','pH','Temperature'])
-        prediction = crop_model.predict(input_data)[0]
-        crop_name = crop_encoder.inverse_transform([prediction])[0]
+        soil_enc_val = soil_encoder.transform([soil])[0]
+        input_df = pd.DataFrame([[soil_enc_val, nitrogen, phosphorus, potassium, rainfall, ph, temperature]],
+                                columns=['Soil_Type','Nitrogen','Phosphorus','Potassium','Rainfall','pH','Temperature'])
+        pred = crop_model.predict(input_df)[0]
+        crop_name = crop_encoder.inverse_transform([pred])[0]
         st.success(f"✅ Recommended Crop: **{crop_name}**")
 
 # ------------------- Fertilizer Tab --------------------
@@ -83,14 +89,14 @@ with tab2:
         deficiency = st.selectbox("⚠️ Nutrient Deficiency", def_enc.classes_, key="fert_def")
 
     if st.button("🧪 Get Fertilizer Recommendation"):
-        df = pd.DataFrame([[crop, soil, stage, deficiency]],
+        df = pd.DataFrame([[crop, soil, stage, deficiency]], 
                           columns=["Crop","Soil_Type","Crop_Stage","Nutrient_Deficiency"])
         df["Crop"] = crop_enc.transform(df["Crop"])
         df["Soil_Type"] = soil_enc.transform(df["Soil_Type"])
         df["Crop_Stage"] = stage_enc.transform(df["Crop_Stage"])
         df["Nutrient_Deficiency"] = def_enc.transform(df["Nutrient_Deficiency"])
-        pred = fert_model.predict(df)[0]
-        fert_name = fert_label_enc.inverse_transform([pred])[0]
+        fert_pred = fert_model.predict(df)[0]
+        fert_name = fert_label_enc.inverse_transform([fert_pred])[0]
         st.success(f"🌱 Recommended Fertilizer: **{fert_name}**")
 
 # ------------------- Water Tab --------------------
@@ -105,10 +111,10 @@ with tab3:
         area = st.number_input("📐 Field Area (acres)", min_value=0.0)
 
     if st.button("💧 Estimate Water Need"):
-        crop_encoded = water_crop_encoder.transform([crop])[0]
-        soil_encoded = water_soil_encoder.transform([soil])[0]
-        stage_encoded = stage_encoder.transform([stage])[0]
-        df = pd.DataFrame([[crop_encoded, soil_encoded, stage_encoded]], columns=["Crop","Soil Type","Crop Stage"])
+        crop_enc_val = water_crop_encoder.transform([crop])[0]
+        soil_enc_val = water_soil_encoder.transform([soil])[0]
+        stage_enc_val = stage_encoder.transform([stage])[0]
+        df = pd.DataFrame([[crop_enc_val, soil_enc_val, stage_enc_val]], columns=["Crop","Soil Type","Crop Stage"])
         water_pred = water_model.predict(df)[0]
         total_water = water_pred * area
         st.success(f"💧 Estimated Water Needed: **{total_water:.2f} mm** for {area} acres")
