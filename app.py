@@ -14,24 +14,24 @@ def load_pickle(path):
         return pickle.load(f)
 
 # Crop
-crop_model = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/crop_model.pkl")
-insurance_model = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/insurance_model.pkl")
-soil_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/soil_encoder.pkl")
-crop_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/crop_encoder.pkl")
+crop_model = load_pickle("crop_model.pkl")
+insurance_model = load_pickle("insurance_model.pkl")
+soil_encoder = load_pickle("soil_encoder.pkl")
+crop_encoder = load_pickle("crop_encoder.pkl")
 
 # Water
-water_model = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/water_model.pkl")
-water_crop_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/water_crop_encoder.pkl")
-water_soil_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/water_soil_encoder.pkl")
-stage_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/stage_encoder.pkl")
+water_model = load_pickle("water_model.pkl")
+water_crop_encoder = load_pickle("water_crop_encoder.pkl")
+water_soil_encoder = load_pickle("water_soil_encoder.pkl")
+stage_encoder = load_pickle("stage_encoder.pkl")
 
 # Fertilizer
-fert_model = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fertilizer_model.pkl")
-crop_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_crop_encoder.pkl")
-soil_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_soil_encoder.pkl")
-stage_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_stage_encoder.pkl")
-def_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_def_encoder.pkl")
-fert_label_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_label_encoder.pkl")
+fert_model = load_pickle("fertilizer_model.pkl")
+crop_enc = load_pickle("fert_crop_encoder.pkl")
+soil_enc = load_pickle("fert_soil_encoder.pkl")
+stage_enc = load_pickle("fert_stage_encoder.pkl")
+def_enc = load_pickle("fert_def_encoder.pkl")
+fert_label_enc = load_pickle("fert_label_encoder.pkl")
 
 # ------------------- App UI Setup --------------------
 st.set_page_config(page_title="Yield Max 🌾", layout="wide")
