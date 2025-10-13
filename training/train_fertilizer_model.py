@@ -3,12 +3,21 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 import pickle
+import os
 
-# Load dataset
-df = pd.read_csv("C:/Users/thasl/OneDrive/Desktop/yield-max/dt/fertilizer_recommendation.csv")
+# ------------------- Base Directories --------------------
+BASE_DIR = os.path.dirname(__file__)  # Current project folder
+DATA_PATH = os.path.join(BASE_DIR, "dt", "fertilizer_recommendation.csv")
+MODEL_DIR = os.path.join(BASE_DIR, "models")
+
+# Create models folder if it doesn't exist
+os.makedirs(MODEL_DIR, exist_ok=True)
+
+# ------------------- Load Dataset --------------------
+df = pd.read_csv(DATA_PATH)
 print("✅ Fertilizer dataset loaded!")
 
-# Encode categorical columns
+# ------------------- Encode Labels --------------------
 crop_encoder = LabelEncoder()
 soil_encoder = LabelEncoder()
 stage_encoder = LabelEncoder()
@@ -21,20 +30,31 @@ df["Crop_Stage"] = stage_encoder.fit_transform(df["Crop_Stage"])
 df["Nutrient_Deficiency"] = def_encoder.fit_transform(df["Nutrient_Deficiency"])
 df["Recommended_Fertilizer"] = fert_encoder.fit_transform(df["Recommended_Fertilizer"])
 
-# Features and target
+# ------------------- Features and Target --------------------
 X = df.drop("Recommended_Fertilizer", axis=1)
 y = df["Recommended_Fertilizer"]
 
-# Train model
+# ------------------- Train Model --------------------
 model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X, y)
 
-# Save model and encoders
-pickle.dump(model, open("fertilizer_model.pkl", "wb"))
-pickle.dump(crop_encoder, open("fert_crop_encoder.pkl", "wb"))
-pickle.dump(soil_encoder, open("fert_soil_encoder.pkl", "wb"))
-pickle.dump(stage_encoder, open("fert_stage_encoder.pkl", "wb"))
-pickle.dump(def_encoder, open("fert_def_encoder.pkl", "wb"))
-pickle.dump(fert_encoder, open("fert_label_encoder.pkl", "wb"))
+# ------------------- Save Model & Encoders --------------------
+with open(os.path.join(MODEL_DIR, "fertilizer_model.pkl"), "wb") as f:
+    pickle.dump(model, f)
+
+with open(os.path.join(MODEL_DIR, "fert_crop_encoder.pkl"), "wb") as f:
+    pickle.dump(crop_encoder, f)
+
+with open(os.path.join(MODEL_DIR, "fert_soil_encoder.pkl"), "wb") as f:
+    pickle.dump(soil_encoder, f)
+
+with open(os.path.join(MODEL_DIR, "fert_stage_encoder.pkl"), "wb") as f:
+    pickle.dump(stage_encoder, f)
+
+with open(os.path.join(MODEL_DIR, "fert_def_encoder.pkl"), "wb") as f:
+    pickle.dump(def_encoder, f)
+
+with open(os.path.join(MODEL_DIR, "fert_label_encoder.pkl"), "wb") as f:
+    pickle.dump(fert_encoder, f)
 
 print("✅ Fertilizer model and encoders saved successfully!")
