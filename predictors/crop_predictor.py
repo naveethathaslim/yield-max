@@ -1,5 +1,4 @@
-# predictors/crop_predictor.py
-import pickle
+import joblib
 import pandas as pd
 import os
 
@@ -8,22 +7,23 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_DIR = os.path.join(PROJECT_ROOT, "models")
 
 # ------------------- Load Model & Encoders --------------------
-def load_pickle(file_name):
+def load_model(file_name):
     path = os.path.join(MODEL_DIR, file_name)
-    with open(path, "rb") as f:
-        return pickle.load(f)
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"❌ File not found: {path}")
+    return joblib.load(path)
 
-crop_model = load_pickle("crop_model.pkl")
-soil_encoder = load_pickle("soil_encoder.pkl")
-crop_encoder = load_pickle("crop_encoder.pkl")
+crop_model = load_model("crop_model.pkl")
+soil_encoder = load_model("soil_encoder.pkl")
+crop_encoder = load_model("crop_encoder.pkl")
 
 # ------------------- Crop Prediction Function --------------------
 def predict_crop(soil, nitrogen, phosphorus, potassium, rainfall, ph, temperature):
     # Encode soil
-    try:
-        soil_encoded = soil_encoder.transform([soil])[0]
-    except ValueError:
+    if soil not in soil_encoder.classes_:
         raise ValueError(f"❌ Soil '{soil}' not found in encoder classes: {soil_encoder.classes_}")
+
+    soil_encoded = soil_encoder.transform([soil])[0]
 
     # Prepare input DataFrame
     input_data = pd.DataFrame(
@@ -32,12 +32,9 @@ def predict_crop(soil, nitrogen, phosphorus, potassium, rainfall, ph, temperatur
     )
 
     # Predict
-    try:
-        prediction = crop_model.predict(input_data)[0]
-        crop_name = crop_encoder.inverse_transform([prediction])[0]
-        return crop_name
-    except AttributeError:
-        raise AttributeError("❌ crop_model.pkl is not a trained model. Re-save it using pickle.dump(model, file).")
+    prediction = crop_model.predict(input_data)[0]
+    crop_name = crop_encoder.inverse_transform([prediction])[0]
+    return crop_name
 
 # ------------------- Example Usage --------------------
 if __name__ == "__main__":
