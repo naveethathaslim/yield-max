@@ -1,8 +1,7 @@
-# train_fertilizer_model.py
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
-import pickle
+import joblib
 import os
 
 # ------------------- Base Directories --------------------
@@ -15,7 +14,7 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 
 # ------------------- Load Dataset --------------------
 df = pd.read_csv(DATA_PATH)
-print("✅ Fertilizer dataset loaded!")
+print("✅ Fertilizer dataset loaded successfully!")
 
 # ------------------- Encode Labels --------------------
 crop_encoder = LabelEncoder()
@@ -37,24 +36,14 @@ y = df["Recommended_Fertilizer"]
 # ------------------- Train Model --------------------
 model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X, y)
+print("✅ Fertilizer model trained successfully!")
 
-# ------------------- Save Model & Encoders --------------------
-with open(os.path.join(MODEL_DIR, "fertilizer_model.pkl"), "wb") as f:
-    pickle.dump(model, f)
+# ------------------- Save Model & Encoders (with joblib) --------------------
+joblib.dump(model, os.path.join(MODEL_DIR, "fertilizer_model.pkl"))
+joblib.dump(crop_encoder, os.path.join(MODEL_DIR, "fert_crop_encoder.pkl"))
+joblib.dump(soil_encoder, os.path.join(MODEL_DIR, "fert_soil_encoder.pkl"))
+joblib.dump(stage_encoder, os.path.join(MODEL_DIR, "fert_stage_encoder.pkl"))
+joblib.dump(def_encoder, os.path.join(MODEL_DIR, "fert_def_encoder.pkl"))
+joblib.dump(fert_encoder, os.path.join(MODEL_DIR, "fert_label_encoder.pkl"))
 
-with open(os.path.join(MODEL_DIR, "fert_crop_encoder.pkl"), "wb") as f:
-    pickle.dump(crop_encoder, f)
-
-with open(os.path.join(MODEL_DIR, "fert_soil_encoder.pkl"), "wb") as f:
-    pickle.dump(soil_encoder, f)
-
-with open(os.path.join(MODEL_DIR, "fert_stage_encoder.pkl"), "wb") as f:
-    pickle.dump(stage_encoder, f)
-
-with open(os.path.join(MODEL_DIR, "fert_def_encoder.pkl"), "wb") as f:
-    pickle.dump(def_encoder, f)
-
-with open(os.path.join(MODEL_DIR, "fert_label_encoder.pkl"), "wb") as f:
-    pickle.dump(fert_encoder, f)
-
-print("✅ Fertilizer model and encoders saved successfully!")
+print("✅ All fertilizer models and encoders saved successfully!")
