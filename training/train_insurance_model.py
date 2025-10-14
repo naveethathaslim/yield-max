@@ -1,8 +1,7 @@
-# train_insurance_model.py
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
-import pickle
+import joblib
 import os
 
 # ------------------- Base Directories --------------------
@@ -15,31 +14,27 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 
 # ------------------- Load Dataset --------------------
 df = pd.read_csv(DATA_PATH)
-print("✅ CSV loaded successfully!")
+print("✅ Insurance dataset loaded successfully!")
 
 # ------------------- Encode Labels --------------------
 crop_encoder = LabelEncoder()
 soil_encoder = LabelEncoder()
 
-df['Crop'] = crop_encoder.fit_transform(df['Crop'])
-df['Soil_Type'] = soil_encoder.fit_transform(df['Soil_Type'])
+df["Crop"] = crop_encoder.fit_transform(df["Crop"])
+df["Soil_Type"] = soil_encoder.fit_transform(df["Soil_Type"])
 
 # ------------------- Features and Target --------------------
-X = df[['Crop', 'Soil_Type']]
-y = df['Risk_Level']
+X = df[["Crop", "Soil_Type"]]
+y = df["Risk_Level"]
 
 # ------------------- Train Model --------------------
-model = RandomForestClassifier(random_state=42)
+model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X, y)
+print("✅ Insurance model trained successfully!")
 
-# ------------------- Save Model & Encoders --------------------
-with open(os.path.join(MODEL_DIR, "insurance_model.pkl"), "wb") as f:
-    pickle.dump(model, f)
+# ------------------- Save Model & Encoders (with joblib) --------------------
+joblib.dump(model, os.path.join(MODEL_DIR, "insurance_model.pkl"))
+joblib.dump(crop_encoder, os.path.join(MODEL_DIR, "ins_crop_encoder.pkl"))
+joblib.dump(soil_encoder, os.path.join(MODEL_DIR, "ins_soil_encoder.pkl"))
 
-with open(os.path.join(MODEL_DIR, "crop_encoder.pkl"), "wb") as f:
-    pickle.dump(crop_encoder, f)
-
-with open(os.path.join(MODEL_DIR, "soil_encoder.pkl"), "wb") as f:
-    pickle.dump(soil_encoder, f)
-
-print("✅ Model trained and saved successfully for Risk_Level prediction!")
+print("✅ All insurance models and encoders saved successfully!")
