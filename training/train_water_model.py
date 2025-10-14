@@ -1,8 +1,7 @@
-# train_water_model.py
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder
-import pickle
+import joblib
 import os
 
 # ------------------- Base Directories --------------------
@@ -15,7 +14,7 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 
 # ------------------- Load Dataset --------------------
 df = pd.read_csv(DATA_PATH)
-print("✅ Water dataset loaded!")
+print("✅ Water dataset loaded successfully!")
 
 # ------------------- Encode Labels --------------------
 crop_encoder = LabelEncoder()
@@ -31,20 +30,14 @@ X = df[["Crop", "Soil Type", "Crop Stage"]]
 y = df["Water Requirement (in mm)"]
 
 # ------------------- Train Model --------------------
-model = RandomForestRegressor(random_state=42)
+model = RandomForestRegressor(random_state=42, n_estimators=100)
 model.fit(X, y)
+print("✅ Water model trained successfully!")
 
 # ------------------- Save Model & Encoders --------------------
-with open(os.path.join(MODEL_DIR, "water_model.pkl"), "wb") as f:
-    pickle.dump(model, f)
-
-with open(os.path.join(MODEL_DIR, "water_crop_encoder.pkl"), "wb") as f:
-    pickle.dump(crop_encoder, f)
-
-with open(os.path.join(MODEL_DIR, "water_soil_encoder.pkl"), "wb") as f:
-    pickle.dump(soil_encoder, f)
-
-with open(os.path.join(MODEL_DIR, "stage_encoder.pkl"), "wb") as f:
-    pickle.dump(stage_encoder, f)
+joblib.dump(model, os.path.join(MODEL_DIR, "water_model.pkl"))
+joblib.dump(crop_encoder, os.path.join(MODEL_DIR, "water_crop_encoder.pkl"))
+joblib.dump(soil_encoder, os.path.join(MODEL_DIR, "water_soil_encoder.pkl"))
+joblib.dump(stage_encoder, os.path.join(MODEL_DIR, "water_stage_encoder.pkl"))
 
 print("✅ Water model and encoders saved successfully!")
