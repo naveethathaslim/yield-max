@@ -1,5 +1,4 @@
-# predictors/water_predictor.py
-import pickle
+import joblib
 import pandas as pd
 import os
 
@@ -8,16 +7,17 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_DIR = os.path.join(PROJECT_ROOT, "models")
 
 # ------------------- Helper --------------------
-def load_pickle(file_name):
+def load_model(file_name):
     path = os.path.join(MODEL_DIR, file_name)
-    with open(path, "rb") as f:
-        return pickle.load(f)
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"❌ File not found: {path}")
+    return joblib.load(path)
 
 # ------------------- Load model & encoders --------------------
-water_model = load_pickle("water_model.pkl")
-crop_encoder = load_pickle("water_crop_encoder.pkl")
-soil_encoder = load_pickle("water_soil_encoder.pkl")
-stage_encoder = load_pickle("stage_encoder.pkl")
+water_model = load_model("water_model.pkl")
+crop_encoder = load_model("water_crop_encoder.pkl")
+soil_encoder = load_model("water_soil_encoder.pkl")
+stage_encoder = load_model("stage_encoder.pkl")
 
 # Allowed values for input validation
 allowed_crops = crop_encoder.classes_.tolist()
@@ -52,3 +52,4 @@ def predict_water(crop, soil_type, crop_stage, area=1.0):
 if __name__ == "__main__":
     water_needed = predict_water("Rice", "Clay", "Seedling", area=2.5)
     print(f"💧 Water Required for 2.5 acres: {water_needed:.2f} mm")
+s
