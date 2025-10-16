@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:20607d2d188609cdf6e77217367965226a7cd6fb6ad53b78ee191175d339cd54
-size 380
+import pickle
+from sklearn.linear_model import LogisticRegression
+import numpy as np
+
+# Create and train a dummy model
+X = np.array([[0, 0], [1, 1]])
+y = np.array([0, 1])
+model = LogisticRegression()
+model.fit(X, y)
+
+# Save the model to 'crop_model.pkl' using protocol 4 for compatibility
+with open("crop_model.pkl", "wb") as f:
+    pickle.dump(model, f, protocol=4)
