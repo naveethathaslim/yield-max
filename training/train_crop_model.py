@@ -1,8 +1,11 @@
-# train_crop_model.py
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
+<<<<<<< HEAD
 import pickle
+=======
+import joblib
+>>>>>>> origin/main
 import os
 
 # ------------------- Base Directories --------------------
@@ -15,6 +18,10 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 
 # ------------------- Load Dataset --------------------
 df = pd.read_csv(DATA_PATH)
+<<<<<<< HEAD
+=======
+print("✅ Dataset loaded successfully!")
+>>>>>>> origin/main
 
 # ------------------- Encode Labels --------------------
 soil_encoder = LabelEncoder()
@@ -32,6 +39,7 @@ model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X, y)
 
 # ------------------- Save Model & Encoders --------------------
+<<<<<<< HEAD
 with open(os.path.join(MODEL_DIR, "crop_model.pkl"), "wb") as f:
     pickle.dump(model, f)
 
@@ -40,5 +48,10 @@ with open(os.path.join(MODEL_DIR, "soil_encoder.pkl"), "wb") as f:
 
 with open(os.path.join(MODEL_DIR, "crop_encoder.pkl"), "wb") as f:
     pickle.dump(crop_encoder, f)
+=======
+joblib.dump(model, os.path.join(MODEL_DIR, "crop_model.joblib"))
+joblib.dump(soil_encoder, os.path.join(MODEL_DIR, "soil_encoder.joblib"))
+joblib.dump(crop_encoder, os.path.join(MODEL_DIR, "crop_encoder.joblib"))
+>>>>>>> origin/main
 
-print("✅ Crop model and encoders saved!")
+print("✅ Crop model and encoders saved successfully to /models folder!")

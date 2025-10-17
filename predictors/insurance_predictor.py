@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 # predictors/insurance_predictor.py
 import pickle
+=======
+import joblib
+>>>>>>> origin/main
 import pandas as pd
 import os
 
@@ -7,6 +11,7 @@ import os
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_DIR = os.path.join(PROJECT_ROOT, "models")
 
+<<<<<<< HEAD
 # ------------------- Helper to load pickles --------------------
 def load_pickle(file_name):
     path = os.path.join(MODEL_DIR, file_name)
@@ -17,6 +22,19 @@ def load_pickle(file_name):
 insurance_model = load_pickle("insurance_model.pkl")
 crop_encoder = load_pickle("crop_encoder.pkl")
 soil_encoder = load_pickle("soil_encoder.pkl")
+=======
+# ------------------- Helper to load models --------------------
+def load_model(file_name):
+    path = os.path.join(MODEL_DIR, file_name)
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"❌ File not found: {path}")
+    return joblib.load(path)
+
+# ------------------- Load Model & Encoders --------------------
+insurance_model = load_model("insurance_model.pkl")
+crop_encoder = load_model("crop_encoder.pkl")
+soil_encoder = load_model("soil_encoder.pkl")
+>>>>>>> origin/main
 
 # Allowed values for input validation
 allowed_crops = crop_encoder.classes_.tolist()
