@@ -4,34 +4,35 @@ import pandas as pd
 from PIL import Image
 import os
 
-# ------------------- Debug: check current directory --------------------
-print("Current working dir:", os.getcwd())
-print("Files in folder:", os.listdir())
-
-# ------------------- Load All Models & Encoders --------------------
+# ------------------- Helper Functions --------------------
 def load_pickle(path):
     with open(path, "rb") as f:
         return pickle.load(f)
 
+# ------------------- Base Directory --------------------
+BASE_DIR = os.path.dirname(__file__)  # Current project folder
+MODEL_DIR = os.path.join(BASE_DIR, "models")  # Models folder
+
+# ------------------- Load All Models & Encoders --------------------
 # Crop
-crop_model = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/crop_model.pkl")
-insurance_model = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/insurance_model.pkl")
-soil_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/soil_encoder.pkl")
-crop_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/crop_encoder.pkl")
+crop_model = load_pickle(os.path.join(MODEL_DIR, "crop_model.pkl"))
+insurance_model = load_pickle(os.path.join(MODEL_DIR, "insurance_model.pkl"))
+soil_encoder = load_pickle(os.path.join(MODEL_DIR, "soil_encoder.pkl"))
+crop_encoder = load_pickle(os.path.join(MODEL_DIR, "crop_encoder.pkl"))
 
 # Water
-water_model = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/water_model.pkl")
-water_crop_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/water_crop_encoder.pkl")
-water_soil_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/water_soil_encoder.pkl")
-stage_encoder = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/stage_encoder.pkl")
+water_model = load_pickle(os.path.join(MODEL_DIR, "water_model.pkl"))
+water_crop_encoder = load_pickle(os.path.join(MODEL_DIR, "water_crop_encoder.pkl"))
+water_soil_encoder = load_pickle(os.path.join(MODEL_DIR, "water_soil_encoder.pkl"))
+stage_encoder = load_pickle(os.path.join(MODEL_DIR, "stage_encoder.pkl"))
 
 # Fertilizer
-fert_model = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fertilizer_model.pkl")
-crop_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_crop_encoder.pkl")
-soil_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_soil_encoder.pkl")
-stage_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_stage_encoder.pkl")
-def_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_def_encoder.pkl")
-fert_label_enc = load_pickle("C:/Users/thasl/OneDrive/Desktop/yield-max/models/fert_label_encoder.pkl")
+fert_model = load_pickle(os.path.join(MODEL_DIR, "fertilizer_model.pkl"))
+crop_enc = load_pickle(os.path.join(MODEL_DIR, "fert_crop_encoder.pkl"))
+soil_enc = load_pickle(os.path.join(MODEL_DIR, "fert_soil_encoder.pkl"))
+stage_enc = load_pickle(os.path.join(MODEL_DIR, "fert_stage_encoder.pkl"))
+def_enc = load_pickle(os.path.join(MODEL_DIR, "fert_def_encoder.pkl"))
+fert_label_enc = load_pickle(os.path.join(MODEL_DIR, "fert_label_encoder.pkl"))
 
 # ------------------- App UI Setup --------------------
 st.set_page_config(page_title="Yield Max 🌾", layout="wide")

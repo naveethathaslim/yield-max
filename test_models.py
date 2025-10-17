@@ -1,14 +1,23 @@
 # test_models.py
 import pickle
 import pandas as pd
+import os
 
-# Load models and encoders (for crop)
-crop_model = pickle.load(open("C:/Users/thasl/OneDrive/Desktop/yield-max/models/crop_model.pkl", "rb"))
-soil_encoder = pickle.load(open("C:/Users/thasl/OneDrive/Desktop/yield-max/models/soil_encoder.pkl", "rb"))
-crop_encoder = pickle.load(open("C:/Users/thasl/OneDrive/Desktop/yield-max/models/crop_encoder.pkl", "rb"))
+# 🔹 Set project root dynamically
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+MODEL_DIR = os.path.join(PROJECT_ROOT, "models")
+DATA_DIR = os.path.join(PROJECT_ROOT, "dt")
+
+# ------------------- Load Crop Model & Encoders -------------------
+with open(os.path.join(MODEL_DIR, "crop_model.pkl"), "rb") as f:
+    crop_model = pickle.load(f)
+with open(os.path.join(MODEL_DIR, "soil_encoder.pkl"), "rb") as f:
+    soil_encoder = pickle.load(f)
+with open(os.path.join(MODEL_DIR, "crop_encoder.pkl"), "rb") as f:
+    crop_encoder = pickle.load(f)
 
 # Load sample data
-sample = pd.read_csv("dt/crop_recommendation.csv").iloc[0]
+sample = pd.read_csv(os.path.join(DATA_DIR, "crop_recommendation.csv")).iloc[0]
 
 # Encode soil
 soil_encoded = soil_encoder.transform([sample['Soil_Type']])[0]
@@ -27,15 +36,15 @@ input_data = pd.DataFrame([[soil_encoded,
 # Predict
 prediction = crop_model.predict(input_data)
 crop_name = crop_encoder.inverse_transform([prediction[0]])[0]
-
 print("✅ Predicted Crop:", crop_name)
 
-# Optional: test fertilizer predictor
+# ------------------- Import other predictors -------------------
 from predictors.crop_predictor import predict_crop
 from predictors.fertilizer_predictor import predict_fertilizer
 from predictors.water_predictor import predict_water
 from predictors.insurance_predictor import predict_insurance
-print("=== Testing Yield Max Models ===\n")
+
+print("\n=== Testing Yield Max Models ===\n")
 
 # --- Crop ---
 try:
